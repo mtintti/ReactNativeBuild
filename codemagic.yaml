@@ -1,25 +1,24 @@
 workflows:
+# Tiedostossa voi olla useita workflow osioita
+# esim. androidille develepor buildi ja production buildi ominaan ja ios omanaan. 
+# Tässä olemme toteuttaneet vain yhden workflown androidille.
   react-native-android:
-    name: React Native Android
-    max_build_duration: 30
-    instance_type: mac_mini_m2
-    environment:
-      java: 17
-      node: latest # onkohan tämä tarpeellinen?
+    name: React Native Android #workflown nimi Codemagicissä
+    max_build_duration: 30 # buildin maksimi kesto minuutteina ennen kuin se keskeytetään
+    instance_type: mac_mini_m2 # buildin suoritusympäristö (mac_mini_m1, mac_mini_m2, linux yms.)
+    environment: # tässä voidaan määritellä suoritusympäristön ympäristömuuttujia ja työkalujen versioita
+      java: 17 
       groups:
-        - firebase
-        - apikeys # weather ja currency
         - permissions #keystore ja gcloud service account key
         - email # build ilmoitusten sähköpostit
+        - env_vars # ympäristömuuttujat
       vars:
-        PACKAGE_NAME: "com.kouluprojekti.MobiiliProjekti"
-#        EXPO_PUBLIC_API_KEY: $EXPO_PUBLIC_API_KEY
-#        EXPO_PUBLIC_AUTH_DOMAIN: $EXPO_PUBLIC_AUTH_DOMAIN
-#        EXPO_PUBLIC_PROJECT_ID: $EXPO_PUBLIC_PROJECT_ID
-#        EXPO_PUBLIC_STORAGE_BUCKET: $EXPO_PUBLIC_STORAGE_BUCKET
-#        EXPO_PUBLIC_MESSAGING_SENDER_ID: $EXPO_PUBLIC_MESSAGING_SENDER_ID
-#        EXPO_PUBLIC_APP_ID: $EXPO_PUBLIC_APP_ID
+        # Tähänkin voi määritellä ympäristömuuttujia
+        # esim package name on sama kuin app.json ja support-files/build.gradle tiedostossa
+        PACKAGE_NAME: "com.jonezki01.OstoslistaSovellus"
 
+    # Tässä voidaan määritellä workflow käynnistymään automaattisesti
+    # esim. push, tag, pull_request githubissa voi käynnistää uuden buildin
    # triggering:
    #   events:
    #     - push
@@ -32,48 +31,44 @@ workflows:
 
 
     scripts:
-        # EXPO_PUBLIC_ -alkuiset muuttujat tulee sijoittaa .env tiedostoon ennen prebuildia
+        # Tässä määritellään buildin vaiheet scripteillä
       - name: Expo public environment variables
-        script: | 
-          echo "FIREBASE_API_KEY=$FIREBASE_API_KEY" >> $CM_BUILD_DIR/.env
-          echo "FIREBASE_AUTH_DOMAIN=$FIREBASE_AUTH_DOMAIN" >> $CM_BUILD_DIR/.env
-          echo "FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID" >> $CM_BUILD_DIR/.env
-          echo "FIREBASE_STORAGE_BUCKET=$FIREBASE_STORAGE_BUCKET" >> $CM_BUILD_DIR/.env
-          echo "FIREBASE_MESSAGING_SENDER_ID=$FIREBASE_MESSAGING_SENDER_ID" >> $CM_BUILD_DIR/.env
-          echo "FIREBASE_APP_ID=$FIREBASE_APP_ID" >> $CM_BUILD_DIR/.env
-          echo "CURRENCY_API_KEY=$CURRENCY_API_KEY" >> $CM_BUILD_DIR/.env
-          echo "WEATHER_CURRENCY_KEY=$WEATHER_CURRENCY_KEY" >> $CM_BUILD_DIR/.env
+        # Jos buildissa tarvitaan .env tiedostoa, se voidaan luoda tässä
+        # WEATHER_API_KEY:tä voi reactissa käyttää myös: process.env.WEATHER_API_KEY ilman .env tiedostoa
+        # koska Codemagicin ympäristömuuttujat ovat käytettävissä myös reactissa
+        #script: | 
+        #echo "WEATHER_API_KEY=$WEATHER_API_KEY" >> $CM_BUILD_DIR/.env
       - name: Install npm dependencies
+        # npm install asentaa projektin riippuvuudet package.json tiedostosta suoritusympäristöön
         script: | 
           npm install
       - name: Run Expo Prebuild
+        # Expo prebuild luo tarvittavat tiedostot android buildia varten
         script: | 
           npx expo prebuild
       - name: Set Android SDK location
+        # Android SDK location määritellään local.properties tiedostoon
         script: | 
           echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/android/local.properties"
       - name: Set up app/build.gradle
+        # Siirretään Codemagicia varten tehty build.gradle tiedosto android/app kansioon 
         script: | 
           mv ./support-files/build.gradle android/app
-#      - name: pre_build_script
-        # ANDROID_FIREBASE_SECRET sisältää google-services.json tiedoston joka on oikeasti uploadausta
-#        script: | 
-          #!/usr/bin/env sh
-#          set -e # exit on first failed command
-#          echo $GOOGLE_SERVICE_JSON | base64 --decode > $CM_BUILD_DIR/android/app/google-services.json
-        # keystoresta haetaan upload key jolla signataan bundle
       - name: Set up keystore
+        # Keystore tiedosto on syötetty Codemagicin ympäristömuuttujaan $KEYSTORE base64 koodattuna
+        # Tässä dekoodataan se ja tallennetaan /tmp kansioon
         script: |
           echo $KEYSTORE | base64 --decode > /tmp/keystore.keystore
-          # The following script creates key.properties file and stores the credentials in it.
-          # 
-          cat >> "$FCI_BUILD_DIR/android/key.properties" <<EOF
+          # Alla oleva komento luo key.properties tiedoston android kansioon
+          # ja määrittelee keystore tiedoston sijainnin, aliaksen ja salasanat
+          cat >> "$CM_BUILD_DIR/android/key.properties" <<EOF
           storePassword=$KEYSTORE_PASSWORD
           keyPassword=$KEY_PASSWORD
           keyAlias=$KEY_ALIAS_USERNAME
           storeFile=/tmp/keystore.keystore
           EOF
-      - name: Debugging environment
+      - name: Debuggailua
+        # Tässä olen lisännyt debuggailua varten komentoja
         script: |    
           echo "Display env file"
           cat $CM_BUILD_DIR/.env
@@ -87,7 +82,13 @@ workflows:
           echo $FCI_BUILD_DIR
           echo "displaying CM_BUILD_DIR"
           echo $CM_BUILD_DIR
+          echo "displaying $WEATHER_API_KEY"
+          echo $WEATHER_API_KEY || echo "Error: WEATHER_API_KEY not found"
       - name: Build Android release
+        # Varsinainen android build komento
+        # versionCode ja versionName määritellään tässä
+        # Aluksi tarkistetaan google playsta viimeisin buildin numero ja lisätään siihen yksi
+        # Jos google playsta ei löydy buildin numeroa, käytetään defaulttina BUILD_NUMBER ympäristömuuttujaa
         script: | 
           LATEST_GOOGLE_PLAY_BUILD_NUMBER=$(google-play get-latest-build-number --package-name "$PACKAGE_NAME")
           if [ -z $LATEST_GOOGLE_PLAY_BUILD_NUMBER ]; then
@@ -102,17 +103,21 @@ workflows:
           ./gradlew bundleRelease \
             -PversionCode=$UPDATED_BUILD_NUMBER \
             -PversionName=1.0.$UPDATED_BUILD_NUMBER
-    #build.gradle tiedostoa varten versionumero
 
     artifacts:
+      # Tässä määritellään buildin jälkeiset tiedostot, jotka halutaan tallentaa
+      # esim. .aab tiedosto julkaistavaksi google playhin
       - android/app/build/outputs/**/*.aab
     publishing:
+      # Tässä määritellään mihin buildin jälkeiset tiedostot julkaistaan
       email:
+        # Tässä määritellään kenelle buildin onnistumis- ja epäonnistumisilmoitukset lähetetään
         recipients:
-          - $JARNO_POSTI
+          - $EMAIL1
         notify:
           success: true
           failure: true
+# App täytyy julkaista google playhin manuaalisesti ensimmäisen kerran ennen kuin se voidaan julkaista automaattisesti          
 #      google_play:
 #        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
 #        track: internal
