@@ -99,7 +99,7 @@ android {
             if (System.getenv()["CI"]) {
                 storeFile file(System.getenv()["KEYSTORE_PATH"])
                 storePassword System.getenv()["KEYSTORE_PASSWORD"]
-                keyAlias System.getenv()["KEY_ALIAS_USERNAME"]
+                keyAlias System.getenv()["KEY_ALIAS"]
                 keyPassword System.getenv()["KEY_PASSWORD"]
             } else {
                 storeFile file('debug.keystore')
