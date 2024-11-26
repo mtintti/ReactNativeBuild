@@ -15,7 +15,7 @@ workflows:
       vars:
         # Tähänkin voi määritellä ympäristömuuttujia
         # esim package name on sama kuin app.json ja support-files/build.gradle tiedostossa
-        PACKAGE_NAME: "com.jonezki01.OstoslistaSovellus"
+        PACKAGE_NAME: "com.AndroidOhjelmointi.OstoslistaSovellus"
 
     # Tässä voidaan määritellä workflow käynnistymään automaattisesti
     # esim. push, tag, pull_request githubissa voi käynnistää uuden buildin
@@ -64,7 +64,7 @@ workflows:
           cat >> "$CM_BUILD_DIR/android/key.properties" <<EOF
           storePassword=$KEYSTORE_PASSWORD
           keyPassword=$KEY_PASSWORD
-          keyAlias=$KEY_ALIAS_USERNAME
+          keyAlias=$KEY_ALIAS
           storeFile=/tmp/keystore.keystore
           EOF
       - name: Debuggailua

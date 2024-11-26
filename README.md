@@ -32,7 +32,7 @@
 
 1. Kloonaa haluamasi repository:
     ```
-    git clone https://github.com/jonezki01/ReactNativeBuild.git
+    git clone https://github.com/AndroidOhjelmointi/ReactNativeBuild.git
     cd ReactNativeBuild
     npm install
     ```
@@ -144,5 +144,5 @@
 
 - Löytyy resurssienhallinnasta koneella:
     ```
-    \\wsl.localhost\Ubuntu\home\jonezki01\ReactNativeBuild
+    \\wsl.localhost\Ubuntu\home\AndroidOhjelmointi\ReactNativeBuild
     ```

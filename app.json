@@ -20,7 +20,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.jonezki01.OstoslistaSovellus"
+      "package": "com.AndroidOhjelmointi.OstoslistaSovellus"
     },
     "web": {
       "favicon": "./assets/favicon.png"
