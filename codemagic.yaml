@@ -32,7 +32,7 @@ workflows:
 
     scripts:
         # Tässä määritellään buildin vaiheet scripteillä
-      - name: Expo public environment variables
+      #- name: Expo public environment variables
         # Jos buildissa tarvitaan .env tiedostoa, se voidaan luoda tässä
         # WEATHER_API_KEY:tä voi reactissa käyttää myös: process.env.WEATHER_API_KEY ilman .env tiedostoa
         # koska Codemagicin ympäristömuuttujat ovat käytettävissä myös reactissa
