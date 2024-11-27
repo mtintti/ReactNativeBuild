@@ -118,7 +118,7 @@ workflows:
           success: true
           failure: true
 # App täytyy julkaista google playhin manuaalisesti ensimmäisen kerran ennen kuin se voidaan julkaista automaattisesti          
-#      google_play:
-#        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
-#        track: internal
-#        submit_as_draft: true
+       google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal
+        submit_as_draft: true
