@@ -1,39 +1,12 @@
 # Expo App -sovelluksen julkaisu Google Playhin Codemagicilla
 
-### 
-
-# Sisällys
-
-[Expo App -sovelluksen julkaisu Google Playhin Codemagicilla
-[1](#expo-app--sovelluksen-julkaisu-google-playhin-codemagicilla)](#expo-app--sovelluksen-julkaisu-google-playhin-codemagicilla)
-
-[Valmistele React Native -sovelluksesi
-[1](#valmistele-react-native--sovelluksesi)](#valmistele-react-native--sovelluksesi)
-
-[Luo Codemagic-tili [3](#luo-codemagic-tili)](#luo-codemagic-tili)
-
-[Codemagic.yaml [4](#codemagic.yaml)](#codemagic.yaml)
-
-[Muokkaa build.gradle- tiedostoa
-[11](#muokkaa-build.gradle--tiedostoa)](#muokkaa-build.gradle--tiedostoa)
-
-[Luo Google Play -julkaisutili, uusi projekti ja luo projektiin uusi
-julkaisu
-[12](#luo-google-play--julkaisutili-uusi-projekti-ja-luo-projektiin-uusi-julkaisu)](#luo-google-play--julkaisutili-uusi-projekti-ja-luo-projektiin-uusi-julkaisu)
-
-[Luo Service Account automaattista Uploadaamista varten
-[19](#luo-service-account-automaattista-uploadaamista-varten)](#luo-service-account-automaattista-uploadaamista-varten)
-
-[Lisätään Service Accountin avain Codemagicin ympäristömuuttujiin
-[23](#lisätään-service-accountin-avain-codemagicin-ympäristömuuttujiin)](#lisätään-service-accountin-avain-codemagicin-ympäristömuuttujiin)
-
 ## Valmistele React Native -sovelluksesi
 
 Valitse haluamasi repository jonka haluat buildata
 
 Esimerkin julkista repositoriota voi käyttää testauksessa:
 
-https://github.com/jonezki01/ReactNativeBuild.git
+https://github.com/mtintti/ReactNativeBuild.git
 
 Voidaksemme yhdistää repo CodeMagiciin sen tulee olla omalla github
 tililläsi.
